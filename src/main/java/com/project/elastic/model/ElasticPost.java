@@ -1,7 +1,5 @@
 package com.project.elastic.model;
 
-import com.project.spent.enums.Topic;
-
 import java.util.Date;
 
 public class ElasticPost {
@@ -9,8 +7,8 @@ public class ElasticPost {
     private String title;
     private String description;
     private String location;
-    private Topic topic;
-    private Boolean event;
+    private String topic;
+    private boolean isEvent;
     private Long userId;
     private String username;
     private Date startTime;
@@ -20,14 +18,14 @@ public class ElasticPost {
     public ElasticPost() {
     }
 
-    public ElasticPost(Long id, String title, String description, String location, Topic topic, Boolean event,
+    public ElasticPost(Long id, String title, String description, String location, String topic, Boolean isEvent,
                        Long userId, String username, Date startTime, Date endTime, Date createdAt) {
         setId(id);
         setTitle(title);
         setDescription(description);
         setLocation(location);
         setTopic(topic);
-        setEvent(event);
+        setEvent(isEvent);
         setUserId(userId);
         setUsername(username);
         setStartTime(startTime);
@@ -67,20 +65,20 @@ public class ElasticPost {
         this.location = location;
     }
 
-    public Topic getTopic() {
+    public String getTopic() {
         return topic;
     }
 
-    public void setTopic(Topic topic) {
+    public void setTopic(String topic) {
         this.topic = topic;
     }
 
-    public Boolean getEvent() {
-        return event;
+    public boolean isEvent() {
+        return isEvent;
     }
 
-    public void setEvent(Boolean event) {
-        this.event = event;
+    public void setEvent(boolean event) {
+        isEvent = event;
     }
 
     public Long getUserId() {
@@ -128,7 +126,7 @@ public class ElasticPost {
         private String title;
         private String description;
         private String location;
-        private Topic topic;
+        private String topic;
         private Boolean event;
         private Long userId;
         private String username;
@@ -156,7 +154,7 @@ public class ElasticPost {
             return this;
         }
 
-        public Builder setTopic(Topic topic) {
+        public Builder setTopic(String topic) {
             this.topic = topic;
             return this;
         }

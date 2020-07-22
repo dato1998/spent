@@ -1,23 +1,31 @@
 package com.project.spent.services;
 
 import com.project.exceptions.EntityNotFoundException;
+import com.project.files.services.CloudinaryStorageService;
 import com.project.spent.dtos.CommentDTO;
+import com.project.spent.dtos.UserDTO;
 import com.project.spent.models.Comment;
 import com.project.spent.repositories.CommentRepository;
+import com.project.spent.services.util.FileHelper;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
     private final CommentRepository repository;
+    private CloudinaryStorageService cloudinaryStorageService;
     private final ModelMapper mapper;
 
-    public CommentService(CommentRepository repository, ModelMapper mapper) {
+    public CommentService(CommentRepository repository, CloudinaryStorageService cloudinaryStorageService, ModelMapper mapper) {
         this.repository = repository;
+        this.cloudinaryStorageService = cloudinaryStorageService;
         this.mapper = mapper;
     }
 
@@ -44,7 +52,15 @@ public class CommentService {
     public CommentDTO get(Long id) {
         Comment comment = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("comment was not found for given id : " + id));
-        return entityToDto(comment);
+
+        final CommentDTO commentDTO = entityToDto(comment);
+        final UserDTO userDTO = commentDTO.getUser();
+        if (userDTO.getPhoto() != null) {
+            final Optional<String> fileObject = FileHelper.getPhotoAsString(cloudinaryStorageService, userDTO);
+            fileObject.ifPresent(s -> userDTO.getPhoto().setFileObject(s));
+        }
+
+        return commentDTO;
     }
 
     @Transactional(readOnly = true)
@@ -56,11 +72,22 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentDTO> getAllByPostId(Long postId) {
-        return repository.findAllByPostId(postId)
+    public List<CommentDTO> getAllByPostId(Long postId, int page) {
+        Pageable pageable = PageRequest.of(page, 2);
+        List<CommentDTO> commentDTOS = repository.findAllByPostIdOrderByCommentedAtDesc(postId, pageable)
                 .stream()
                 .map(this::entityToDto)
                 .collect(Collectors.toList());
+
+        for (CommentDTO commentDTO : commentDTOS) {
+            final UserDTO userDTO = commentDTO.getUser();
+            if (userDTO.getPhoto() != null) {
+                final Optional<String> fileObject = FileHelper.getPhotoAsString(cloudinaryStorageService, userDTO);
+                fileObject.ifPresent(s -> userDTO.getPhoto().setFileObject(s));
+            }
+        }
+
+        return commentDTOS;
     }
 
     @Transactional(readOnly = true)

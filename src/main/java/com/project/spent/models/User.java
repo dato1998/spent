@@ -2,18 +2,7 @@ package com.project.spent.models;
 
 import com.project.files.models.File;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,13 +30,13 @@ public class User {
     @OneToOne
     @JoinColumn(name = "file_id", referencedColumnName = "id")
     private File photo;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "event_subscriptions",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "post_id"))
     private Set<Post> subscribedPosts;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "post_bookmarks",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -155,5 +144,22 @@ public class User {
 
     public void setBookmarkedPosts(Set<Post> bookmarkedPosts) {
         this.bookmarkedPosts = bookmarkedPosts == null ? new HashSet<>() : bookmarkedPosts;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", description='" + description + '\'' +
+                ", posts=" + posts +
+                ", comments=" + comments +
+                ", photo=" + photo +
+                ", subscribedPosts=" + subscribedPosts +
+                ", bookmarkedPosts=" + bookmarkedPosts +
+                '}';
     }
 }

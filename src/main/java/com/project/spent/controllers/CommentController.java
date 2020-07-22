@@ -4,15 +4,7 @@ import com.project.spent.dtos.CommentDTO;
 import com.project.spent.services.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -29,6 +21,7 @@ public class CommentController {
 
     @PostMapping("/")
     public ResponseEntity<CommentDTO> add(@Valid @RequestBody final CommentDTO dto) {
+        System.out.println("add comment");
         return new ResponseEntity<>(service.add(dto), HttpStatus.CREATED);
     }
 
@@ -53,9 +46,10 @@ public class CommentController {
         return new ResponseEntity<>(service.getAllByUserId(userId), HttpStatus.OK);
     }
 
-    @GetMapping("/post")
-    public ResponseEntity<List<CommentDTO>> getAllByPostId(final Long postId) {
-        return new ResponseEntity<>(service.getAllByPostId(postId), HttpStatus.OK);
+    @GetMapping(value = "/post/{postId}", params = "page")
+    public ResponseEntity<List<CommentDTO>> getAllByPostId(@PathVariable final Long postId,
+                                                           @RequestParam("page") final int page) {
+        return new ResponseEntity<>(service.getAllByPostId(postId, page), HttpStatus.OK);
     }
 
     @GetMapping("/parent")

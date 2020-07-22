@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
-public class FTPStorageService implements StorageService {
+public class FTPStorageService {
     private final FileRepository repository;
     private final ModelMapper mapper;
     @Value("${ftp.path}")

@@ -6,16 +6,18 @@ public class ClientInformation {
     private String email;
     private Long userId;
     private String token;
+    private String fileObject;
 
     public ClientInformation() {
     }
 
-    public ClientInformation(String username, String fullName, String email, Long userId, String token) {
+    public ClientInformation(String username, String fullName, String email, Long userId, String token, String fileObject) {
         setUsername(username);
         setFullName(fullName);
         setEmail(email);
         setUserId(userId);
         setToken(token);
+        setFileObject(fileObject);
     }
 
     public String getUsername() {
@@ -56,5 +58,13 @@ public class ClientInformation {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getFileObject() {
+        return fileObject;
+    }
+
+    public void setFileObject(String fileObject) {
+        this.fileObject = fileObject;
     }
 }

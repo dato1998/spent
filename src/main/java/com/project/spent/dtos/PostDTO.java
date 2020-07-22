@@ -1,35 +1,44 @@
 package com.project.spent.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.files.dtos.FileDTO;
-import com.project.files.models.File;
-import com.project.spent.enums.Topic;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class PostDTO {
     private Long id;
+    private boolean event;
     private String title;
     private String description;
-    private String location;
-    private Topic topic;
-    private Boolean event;
+    @JsonFormat(timezone = "GMT+04:00")
     private Date startTime;
+    @JsonFormat(timezone = "GMT+04:00")
     private Date endTime;
-    private Date postedAt;
+    private String location;
+    private Double latitude;
+    private Double longitude;
+    private String topic;
     private UserDTO user;
+    @JsonFormat(timezone = "GMT+04:00")
+    private Date postedAt;
+    private Long commentsNumber;
+    private Set<UserDTO> subscribedUsers;
     private List<FileDTO> files;
 
     public PostDTO() {
     }
 
-    public PostDTO(Long id, String title, String description, String location, Topic topic, Boolean event,
-                   Date startTime, Date endTime, Date postedAt, UserDTO user, List<FileDTO> files) {
+    public PostDTO(Long id, String title, String description, String location, Double latitude, Double longitude,
+                   String topic, boolean event, Date startTime, Date endTime, Date postedAt, UserDTO user, List<FileDTO> files) {
         setId(id);
         setTitle(title);
         setDescription(description);
         setLocation(location);
+        setLatitude(latitude);
+        setLongitude(longitude);
         setTopic(topic);
         setEvent(event);
         setStartTime(startTime);
@@ -71,19 +80,35 @@ public class PostDTO {
         this.location = location;
     }
 
-    public Topic getTopic() {
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getTopic() {
         return topic;
     }
 
-    public void setTopic(Topic topic) {
+    public void setTopic(String topic) {
         this.topic = topic;
     }
 
-    public Boolean getEvent() {
+    public boolean isEvent() {
         return event;
     }
 
-    public void setEvent(Boolean event) {
+    public void setEvent(boolean event) {
         this.event = event;
     }
 
@@ -127,19 +152,39 @@ public class PostDTO {
         this.files = files == null ? new ArrayList<>() : files;
     }
 
+    public Long getCommentsNumber() {
+        return commentsNumber;
+    }
+
+    public void setCommentsNumber(Long commentsNumber) {
+        this.commentsNumber = commentsNumber;
+    }
+
+    public Set<UserDTO> getSubscribedUsers() {
+        return subscribedUsers;
+    }
+
+    public void setSubscribedUsers(Set<UserDTO> subscribedUsers) {
+        this.subscribedUsers = subscribedUsers;
+    }
+
     @Override
     public String toString() {
         return "PostDTO{" +
                 "id=" + id +
+                ", event=" + event +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", location='" + location + '\'' +
-                ", topic=" + topic +
-                ", event=" + event +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", postedAt=" + postedAt +
+                ", location='" + location + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", topic='" + topic + '\'' +
                 ", user=" + user +
+                ", postedAt=" + postedAt +
+                ", commentsNumber=" + commentsNumber +
+                ", subscribedUsers=" + subscribedUsers +
                 ", files=" + files +
                 '}';
     }

@@ -6,6 +6,9 @@ import com.project.files.configs.CloudinaryClientConfiguration;
 import com.project.files.dtos.FileDTO;
 import com.project.files.models.File;
 import com.project.files.repositories.FileRepository;
+import com.project.spent.dtos.UserDTO;
+import com.project.spent.models.User;
+import com.project.spent.services.UserService;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -16,27 +19,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CloudinaryStorageService implements StorageService {
     private final FileRepository repository;
+    private final UserService userService;
     private final ModelMapper mapper;
     private static final Logger log = Logger.getLogger(CloudinaryStorageService.class);
     private final Cloudinary cloudinary;
 
-    public CloudinaryStorageService(FileRepository repository, ModelMapper mapper, CloudinaryClientConfiguration configuration) {
+    public CloudinaryStorageService(FileRepository repository, UserService userService,
+                                    ModelMapper mapper, CloudinaryClientConfiguration configuration) {
         this.repository = repository;
+        this.userService = userService;
         this.mapper = mapper;
         this.cloudinary = configuration.cloudinaryConfiguration();
     }
 
-    public FileDTO uploadFile(MultipartFile fileToUpload) {
+    public FileDTO uploadFile(long userId, MultipartFile fileToUpload) {
         String fileName = System.currentTimeMillis() + "_" + fileToUpload.getOriginalFilename();
         String filePath = "files/" + fileName.substring(0, fileName.indexOf("."));
         try {
@@ -48,14 +49,20 @@ public class CloudinaryStorageService implements StorageService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         File file = new File(fileName, filePath, fileToUpload.getContentType(), Objects.requireNonNull(fileToUpload.getOriginalFilename()).substring(fileToUpload.getOriginalFilename().lastIndexOf(".") + 1), String.valueOf(fileToUpload.getSize()));
-        return entityToDto(repository.save(file));
+        final FileDTO savedFile = entityToDto(repository.save(file));
+        final User user = mapper.map(userService.get(userId), User.class);
+        user.setPhoto(file);
+        userService.update(userId, mapper.map(user, UserDTO.class));
+
+        return savedFile;
     }
 
-    public List<FileDTO> uploadFiles(List<MultipartFile> filesToUpload) {
+    public List<FileDTO> uploadFiles(long userId, List<MultipartFile> filesToUpload) {
         List<FileDTO> files = new ArrayList<>();
         for (int i = 0; i < filesToUpload.size(); i++) {
-            FileDTO file = uploadFile(filesToUpload.get(i));
+            FileDTO file = uploadFile(userId, filesToUpload.get(i));
             files.add(file);
         }
         return files;

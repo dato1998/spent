@@ -1,14 +1,12 @@
 package com.project.elastic.dtos;
 
-import com.project.spent.enums.Topic;
-
 import java.util.Date;
 
 public class SearchPostDTO {
     private Long id;
     private String name;
     private String location;
-    private Topic topic;
+    private String topic;
     private Boolean event;
     private Long userId;
     private String username;
@@ -24,7 +22,7 @@ public class SearchPostDTO {
     public SearchPostDTO() {
     }
 
-    public SearchPostDTO(Long id, String name, String location, Topic topic, Boolean event, Long userId, String username,
+    public SearchPostDTO(Long id, String name, String location, String topic, Boolean event, Long userId, String username,
                          Date startTimeFrom, Date startTimeTo, Date endTimeFrom, Date endTimeTo, Date createdAtFrom,
                          Date createdAtTo, Integer limit, Integer offset) {
         setId(id);
@@ -68,11 +66,11 @@ public class SearchPostDTO {
         this.location = location;
     }
 
-    public Topic getTopic() {
+    public String getTopic() {
         return topic;
     }
 
-    public void setTopic(Topic topic) {
+    public void setTopic(String topic) {
         this.topic = topic;
     }
 

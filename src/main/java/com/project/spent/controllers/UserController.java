@@ -5,16 +5,7 @@ import com.project.spent.dtos.UserDTO;
 import com.project.spent.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -44,6 +35,22 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> get(@PathVariable("id") final Long id) {
         return new ResponseEntity<>(service.get(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UserDTO> getByEmail(@PathVariable("email") final String email) {
+        return new ResponseEntity<>(service.getByEmail(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UserDTO> getByUsername(@PathVariable("username") final String username) {
+        return new ResponseEntity<>(service.getByUsername(username), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/password/{password}")
+    public ResponseEntity<UserDTO> getByPassword(@PathVariable("id") long id,
+                                                 @PathVariable("password") String password) {
+        return new ResponseEntity<>(service.getByPassword(id, password), HttpStatus.OK);
     }
 
     @GetMapping("/")
