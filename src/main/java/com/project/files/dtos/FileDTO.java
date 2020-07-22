@@ -9,6 +9,7 @@ public class FileDTO {
     private String size;
     private String lastUpdateTime;
     private String lastUpdatedBy;
+    private String fileObject;
 
     public FileDTO() {
     }
@@ -89,6 +90,14 @@ public class FileDTO {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
+    public String getFileObject() {
+        return fileObject;
+    }
+
+    public void setFileObject(String fileObject) {
+        this.fileObject = fileObject;
+    }
+
     @Override
     public String toString() {
         return "FileDTO{" +
@@ -100,6 +109,7 @@ public class FileDTO {
                 ", size='" + size + '\'' +
                 ", lastUpdateTime='" + lastUpdateTime + '\'' +
                 ", lastUpdatedBy='" + lastUpdatedBy + '\'' +
+                ", fileObject='" + fileObject + '\'' +
                 '}';
     }
 }

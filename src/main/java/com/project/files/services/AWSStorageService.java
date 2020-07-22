@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
-public class AWSStorageService implements StorageService {
+public class AWSStorageService {
     private final FileRepository repository;
     private final ModelMapper mapper;
     @Value("${aws.bucketName}")

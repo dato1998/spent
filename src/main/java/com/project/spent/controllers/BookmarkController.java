@@ -2,18 +2,10 @@ package com.project.spent.controllers;
 
 import com.project.spent.dtos.PostDTO;
 import com.project.spent.dtos.UserDTO;
-import com.project.spent.models.Post;
 import com.project.spent.services.BookmarkService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -28,21 +20,21 @@ public class BookmarkController {
         this.service = service;
     }
 
-    @PostMapping("/")
-    public ResponseEntity add(@Valid @RequestBody final UserDTO dto, final Long postId) {
+    @PostMapping("/{postId}")
+    public ResponseEntity add(@Valid @RequestBody final UserDTO dto, @PathVariable("postId") final Long postId) {
         service.add(dto, postId);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @PutMapping("/")
-    public ResponseEntity delete(@Valid @RequestBody final UserDTO dto, final Long postId) {
+    @PutMapping("/{postId}")
+    public ResponseEntity delete(@Valid @RequestBody final UserDTO dto, @PathVariable("postId") final Long postId) {
         service.delete(dto, postId);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<List<PostDTO>> getByUserId(final Long userId) {
-        return new ResponseEntity<>(service.getByUserId(userId), HttpStatus.OK);
+    @GetMapping(value = "/user/{userId}", params = "page")
+    public ResponseEntity<List<PostDTO>> getByUserId(@PathVariable("userId") final Long userId, @RequestParam("page") int page) {
+        return new ResponseEntity<>(service.getByUserId(userId, page), HttpStatus.OK);
     }
 
     @GetMapping("/post")

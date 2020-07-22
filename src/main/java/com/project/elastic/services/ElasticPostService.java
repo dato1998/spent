@@ -22,11 +22,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
@@ -235,7 +231,7 @@ public class ElasticPostService {
                 .setDescription(post.getDescription())
                 .setLocation(post.getLocation())
                 .setTopic(post.getTopic())
-                .setEvent(post.getEvent())
+                .setEvent(post.isEvent())
                 .setUserId(post.getUser().getId())
                 .setUsername(post.getUser().getUsername())
                 .setStartTime(post.getStartTime())

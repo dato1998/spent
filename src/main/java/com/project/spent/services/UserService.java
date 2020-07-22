@@ -15,6 +15,8 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,8 @@ public class UserService {
     private final SendGrid sendGrid;
     private final ModelMapper mapper;
 
-    public UserService(UserRepository repository, JwtTokenUtil jwtTokenUtil, SecurityService securityService, SendGrid sendGrid, ModelMapper mapper) {
+    public UserService(UserRepository repository, JwtTokenUtil jwtTokenUtil, @Lazy SecurityService securityService,
+                       SendGrid sendGrid, ModelMapper mapper) {
         this.repository = repository;
         this.jwtTokenUtil = jwtTokenUtil;
         this.securityService = securityService;
@@ -56,7 +59,9 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("user was not found for given id : " + id));
         User user = dtoToEntity(dto);
         user.setId(id);
-        if (!dto.getPassword().equals(oldUser.getPassword())) {
+        user.setSubscribedPosts(oldUser.getSubscribedPosts());
+        user.setBookmarkedPosts(oldUser.getBookmarkedPosts());
+        if (dto.getPassword() != null && !dto.getPassword().equals(oldUser.getPassword())) {
             user.setPassword(encoder.encode(dto.getPassword()));
         } else {
             user.setPassword(oldUser.getPassword());
@@ -69,6 +74,33 @@ public class UserService {
         User user = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("user was not found for given id : " + id));
         return entityToDto(user);
+    }
+
+
+    @Transactional(readOnly = true)
+    public UserDTO getByEmail(String email) {
+        User user = repository.findByEmail(email);
+        if (user == null)
+            throw new EntityNotFoundException("user was not found for given email : " + email);
+        return entityToDto(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO getByUsername(String username) {
+        User user = repository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("user was not found for given username : " + username));
+
+        return entityToDto(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO getByPassword(long id, String password) {
+        UserDTO userDTO = this.get(id);
+
+        if (!encoder.matches(password, userDTO.getPassword()))
+            throw new EntityNotFoundException("user was not found for given id and password");
+
+        return userDTO;
     }
 
     @Transactional(readOnly = true)
@@ -116,8 +148,8 @@ public class UserService {
     @Transactional
     public Map<String, Object> resetPassword(String confirmationToken, Credentials dto) {
         Map<String, Object> messageForResetPassword = new HashMap<>();
-        String email = jwtTokenUtil.getEmailFromToken(confirmationToken);
-        User user = repository.findByEmail(email);
+        String username = jwtTokenUtil.getUsernameFromToken(confirmationToken);
+        User user = repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         user.setPassword(encoder.encode(dto.getPassword()));
         repository.save(user);
         messageForResetPassword.put("message", "Password successfully reset. You can now log in with the new credentials.");

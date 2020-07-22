@@ -1,5 +1,6 @@
 package com.project.spent.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.files.dtos.FileDTO;
 import com.project.files.models.File;
 import com.project.spent.models.Comment;
@@ -12,6 +13,7 @@ public class CommentDTO {
     private Long id;
     private String text;
     private Boolean replies;
+    @JsonFormat(timezone = "GMT+04:00")
     private Date commentedAt;
     private UserDTO user;
     private PostDTO post;

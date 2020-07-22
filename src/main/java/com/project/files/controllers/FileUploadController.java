@@ -6,16 +6,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -32,14 +23,16 @@ public class FileUploadController {
         this.service = (StorageService) applicationContext.getBean(name);
     }
 
-    @PostMapping("/file/")
-    public ResponseEntity<Object> uploadFile(@RequestParam(value = "file") MultipartFile multipartFile) {
-        return new ResponseEntity<>(service.uploadFile(multipartFile), HttpStatus.OK);
+    @PostMapping("/file/user/{userId}")
+    public ResponseEntity<Object> uploadFile(@PathVariable("userId") final long userId,
+                                             @RequestParam(value = "file") MultipartFile multipartFile) {
+        return new ResponseEntity<>(service.uploadFile(userId, multipartFile), HttpStatus.OK);
     }
 
-    @PostMapping("/files/")
-    public ResponseEntity<Object> uploadFiles(@RequestPart("files") List<MultipartFile> files) {
-        return new ResponseEntity<>(service.uploadFiles(files), HttpStatus.OK);
+    @PostMapping("/files/user/{userId}")
+    public ResponseEntity<Object> uploadFiles(@PathVariable("userId") final long userId,
+                                              @RequestPart("files") List<MultipartFile> files) {
+        return new ResponseEntity<>(service.uploadFiles(userId, files), HttpStatus.OK);
     }
 
     @PutMapping("/file/")
